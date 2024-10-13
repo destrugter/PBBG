@@ -1,0 +1,65 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using System.Numerics
+@inject IMessageService MessageService
+@using Microsoft.FluentUI.AspNetCore.Components
+@using PBBG.Contracts
+@using PBBG.Components.Shared
+
+@* <FluentButton IconStart="@(new Icons.Regular.Size48.AddSquare())" OnClick="@(() => ownedPlots.Add(true))"> *@
+@*     Buy new plot *@
+@* </FluentButton> *@
+
+<FluentButton OnClick="@AddInNotificationCenter" Appearance="Appearance.Accent">Test add notification</FluentButton>
+
+
+
+
+@code{
+    
+    private int Percentage { get; set; } = 0;
+    
+    private string? imageSource { get; set; }
+
+    private List<string> imageSources { get; } = new List<string>()
+    {
+        "images/tomato01.png",
+        "images/tomato02.png",
+        "images/tomato03.png",
+        "images/tomato04.png",
+        "images/tomato05.png",
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private int currentElementIndex { get; set; } = 0;
+    
+    private void OnTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        currentElementIndex = (currentElementIndex + 1) % imageSources.Count;
+        
+        InvokeAsync(() =>
+        {
+            // Percentage++; // Increment the counter
+            imageSource = imageSources.ElementAt(currentElementIndex);
+            StateHasChanged(); // Update the UI
+        });
+    }
+    
+    void AddInNotificationCenter()
+    {
+        MessageService.ShowMessageBar(options =>
+        {
+            options.Intent = MessageIntent.Info;
+            options.Title = $"Simple message";
+            options.Body = $"Testing notifications out";
+            // options.Link = link;
+            options.Timestamp = DateTime.Now;
+            options.Section = App.MESSAGES_NOTIFICATION_CENTER;
+        });
+    }
+}
+

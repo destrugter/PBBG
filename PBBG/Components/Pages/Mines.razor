@@ -1,0 +1,152 @@
+﻿@page "/Mines/{SelectedMineId?}"
+@using PBBG.Contracts
+@using PBBG.Components.Shared
+@using PBBG.Contracts.Helpers
+
+<FluentGrid>
+    @if (SelectedMine is null)
+    {
+        @foreach (var mine in MineList)
+        {
+            <FluentGridItem xs="1">
+                <a href="@($"/Mines/{SlugHelper.ToUrlSlug(mine.Name)}")" style="text-decoration: none;">
+                    <MineCard Mine="mine"/>
+                </a>
+            </FluentGridItem>
+        }
+    }
+    else
+    {
+        @foreach (var rock in SelectedMine.Rocks)
+        {
+            <FluentGridItem xs="1">
+                <RockCard Rock="rock" />
+            </FluentGridItem>
+        }
+    }
+</FluentGrid>
+
+@code{
+    [Parameter]
+    public string? SelectedMineId { get; set; }
+    
+    private Mine? SelectedMine { get; set; }
+    
+    private List<Rock> Rocks { get; set; }
+    
+    private List<Mine> MineList { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        SelectedMine = MineList.Find(x => SlugHelper.ToUrlSlug(x.Name).Equals(SelectedMineId, StringComparison.CurrentCultureIgnoreCase));
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var gemDropTable = new DropTable("Gem Drop Table", (1f / 256f), new List<DropItem>
+        {
+            new DropItem("Nothing", 1f / (468f / 256f), null),
+            new DropItem("Uncut Sapphire", 1f / (1024f / 256f), "images/Gems/Uncut_sapphire.webp"),
+            new DropItem("Uncut Emerald", 1f / (2048f / 256f), "images/Gems/Uncut_emerald.webp"),
+            new DropItem("Uncut Ruby", 1f / (4096f / 256f), "images/Gems/Uncut_ruby.webp"),
+            new DropItem("Uncut Diamond", 1f / (16384f / 256f), "images/Gems/Uncut_diamond.webp"),
+        });
+
+        var copperRock = new Rock
+        {
+            Name = "Copper",
+            Image = $"images/Rocks/Copper_ore_vein.png",
+            RequiredLevel = 1,
+            Experience = 17.5f,
+            DropTables = new List<DropTable>
+            {
+                new DropTable("Copper Primary Drop Table", 1f, new List<DropItem>
+                    {
+                        new DropItem("Copper Ore", 1f, "images/Rocks/Copper_ore.webp")
+                    }
+                ),
+
+                gemDropTable
+            }
+        };
+
+        var tinRock = new Rock
+        {
+            Name = "Tin",
+            Image = $"images/Rocks/Tin_ore_vein.png",
+            RequiredLevel = 1,
+            Experience = 17.5f,
+            DropTables = new List<DropTable>
+            {
+                new DropTable("Tin Primary Drop Table", 1f, new List<DropItem>
+                    {
+                        new DropItem("Tin Ore", 1f, "images/Rocks/Tin_ore.webp")
+                    }
+                ),
+
+                gemDropTable
+            }
+        };
+
+        var clayRock = new Rock
+        {
+            Name = "Clay",
+            Image = $"images/Rocks/Clay_ore_vein.png",
+            RequiredLevel = 1,
+            Experience = 5f,
+            DropTables = new List<DropTable>
+            {
+                new DropTable("Clay Primary Drop Table", 1f, new List<DropItem>
+                    {
+                        new DropItem("Clay", 1f, "images/Rocks/Clay.webp")
+                    }
+                ),
+
+                gemDropTable
+            }
+        };
+
+        var ironRock = new Rock
+        {
+            Name = "Iron",
+            Image = $"images/Rocks/Iron_ore_vein.png",
+            RequiredLevel = 15,
+            Experience = 35f,
+            DropTables = new List<DropTable>
+            {
+                new DropTable("Iron Primary Drop Table", 1f, new List<DropItem>
+                    {
+                        new DropItem("Iron Ore", 1f, "images/Rocks/Iron_ore.webp")
+                    }
+                ),
+
+                gemDropTable
+            }
+        };
+        
+        MineList = new List<Mine>
+        {
+            new Mine
+            {
+                Name = "Level 1",
+                Image = "images/Cave/mining-cave-level-1-entrance.webp",
+                Rocks = new List<Rock>
+                {
+                    copperRock,
+                    tinRock,
+                    clayRock,
+                    ironRock
+                }
+            }
+        };
+    }
+
+    private async Task HarvestRock(Rock rock)
+    {
+        rock.Quantity--;
+    }
+}

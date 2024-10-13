@@ -1,0 +1,29 @@
+﻿@using PBBG.Contracts
+@rendermode InteractiveServer
+
+<FluentCard>
+    <FluentGrid>
+        <FluentGridItem xs="12">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+                <FluentBadge>
+                    @* Status effects *@
+                </FluentBadge>
+            </FluentStack>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12">
+            <img src="@Mine.Image" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;"/>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12">
+            @Mine.Name
+        </FluentGridItem>
+
+        <FluentGridItem xs="12">
+            @foreach (var rock in Mine.Rocks.SelectMany(x => x.DropTables).SelectMany(x => x.Items).Distinct())
+            {
+            <img src="@rock.Image" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;"/>
+            }
+        </FluentGridItem>
+    </FluentGrid>
+</FluentCard>

@@ -1,0 +1,93 @@
+﻿@page "/Fields"
+@using System.Numerics
+@using PBBG.Contracts
+
+<FluentRadioGroup Name="numbers" @bind-Value=plotType Label="Numbers">
+    <FluentRadio Value="1">Tomato</FluentRadio>
+    <FluentRadio Value="2">Water</FluentRadio>
+</FluentRadioGroup>
+
+@* <FluentGrid> *@
+@*     @foreach(var plot in Plots.Values.ToList()) *@
+@*     { *@
+@*         <FluentGridItem xs="1"> *@
+@*             <PlotComponent Plot="@plot" ProcessPlotCommand="@PlotClicked"  /> *@
+@*         </FluentGridItem> *@
+@*     } *@
+@* </FluentGrid> *@
+
+<FluentGrid>
+    @foreach(var plot in Plots.Values.ToList())
+    {
+        <FluentGridItem>
+            <PlotComponent Plot="@plot" ProcessPlotCommand="@PlotClicked"  />
+        </FluentGridItem>
+    }
+</FluentGrid>
+
+@code{
+    int plotType;
+    
+    private Dictionary<Vector2, Plot> Plots { get; set; } = new Dictionary<Vector2, Plot>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Plots = Enumerable.Range(0, 12).SelectMany(x => Enumerable.Range(0, 12).Select(y => new Plot{ Position = new Vector2(x, y)})).ToDictionary(g => g.Position, g => g);
+    }
+    
+    private async Task PlotClicked(Plot plotClicked)
+    {
+        plotClicked.PlotType = plotType;
+        
+        var neighbors = await GetNeighbors(this.Plots, plotClicked.Position, 4);
+
+        if (plotType == 1)
+        {
+            plotClicked.IsWatered = neighbors.Any(x => x.Item2.PlotType == 2);
+        }
+        if (plotType == 2)
+        {
+            foreach (var neighborPlot in neighbors)
+            {
+                neighborPlot.Item2.IsWatered = true;
+            }
+            // var plantPlots = neighbors.Where(x => x.Item2.PlotType == 1);
+            //
+            // foreach (var plantPlot in plantPlots)
+            // {
+            //     plantPlot.Item2.IsWatered = true;
+            // }
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task<List<(Vector2, Plot)>> GetNeighbors(Dictionary<Vector2, Plot> grid, Vector2 position, int range)
+    {
+        List<(Vector2, Plot)> neighbors = new List<(Vector2, Plot)>();
+
+        // Iterate over the cells within the specified range
+        for (int i = (int)position.X - range; i <= (int)position.X + range; i++)
+        {
+            for (int j = (int)position.Y - range; j <= (int)position.Y + range; j++)
+            {
+                Vector2 neighborPosition = new Vector2(i, j);
+
+                // Exclude the clicked cell itself
+                if (!(i == (int)position.X && j == (int)position.Y))
+                {
+                    // Check if the neighbor position exists in the dictionary
+                    if (grid.ContainsKey(neighborPosition))
+                    {
+                        // Add both the position (Vector2) and the Card to the neighbors list
+                        neighbors.Add((neighborPosition, grid[neighborPosition]));
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+}

@@ -1,0 +1,66 @@
+﻿@rendermode InteractiveServer
+
+<FluentCard Style="@(Plot.IsWatered ? "background-color: blue;" : null)">
+    @Plot.Position
+    
+    @switch (Plot.PlotType)
+    {
+        case 0:
+            <FluentButton IconStart="@(new Icons.Regular.Size48.AddSquare())" OnClick="PlotClicked">
+                Buy new plot
+            </FluentButton>
+            break;
+        case 1:
+            <FluentGrid>
+                <FluentGridItem xs="12">
+                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+                        <FluentBadge>
+                            @if (!Plot.IsWatered)
+                            {
+                                <FluentIcon Id="isNotWateredStatusEffect" Value="@(new Icons.Regular.Size16.Water())"/>
+
+                                <FluentTooltip Anchor="isNotWateredStatusEffect">
+                                    This crop needs to be closer to a water source!
+                                </FluentTooltip>
+                            }
+                        </FluentBadge>
+                    </FluentStack>
+                </FluentGridItem>
+
+                <FluentGridItem xs="12">
+                    @* <img src="@imageSource" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;"/> *@
+                </FluentGridItem>
+
+                <FluentGridItem xs="12">
+                    Your tomato plant!
+                </FluentGridItem>
+
+                <FluentGridItem xs="6">
+                    <FluentCounterBadge Count="@Plot.Quantity" BackgroundColor="@Color.Error" Color="Color.Fill">
+                        <ChildContent>
+                            <FluentButton>
+                                Harvest
+                            </FluentButton>
+                        </ChildContent>
+                        <BadgeTemplate>@context</BadgeTemplate>
+                    </FluentCounterBadge>
+                </FluentGridItem>
+
+                <FluentGridItem xs="6">
+                    <FluentButton>Destroy</FluentButton>
+                </FluentGridItem>
+            </FluentGrid>
+            break;
+        case 2:
+            <FluentGrid>
+                <FluentGridItem xs="12">
+                    <img src="images/water.png" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;"/>
+                </FluentGridItem>
+
+                <FluentGridItem xs="12">
+                    <FluentButton>Destroy</FluentButton>
+                </FluentGridItem>
+            </FluentGrid>
+            break;
+    }
+</FluentCard>

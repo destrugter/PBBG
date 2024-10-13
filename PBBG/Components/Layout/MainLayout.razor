@@ -1,0 +1,114 @@
+﻿@using System.Runtime.InteropServices
+@using PBBG.Components.Shared
+@inherits LayoutComponentBase
+@namespace PBBG.Components.Layout
+
+<div>
+    <FluentLayout>
+        <FluentHeader>
+            <a class="navbar-brand" href="">PBBG</a>
+            
+            <FluentSpacer/>
+
+            <FluentStack HorizontalAlignment="@HorizontalAlignment.End"
+                         VerticalAlignment="@VerticalAlignment.Center"
+                         >
+
+                <div class="notifications">
+                    <NotificationCenter/>
+                </div>
+                
+                <FluentProfileMenu FullName="destrugter"
+                                   Style="--fluent-profile-menu-hover: var(--neutral-stroke-focus); padding: 4px;">
+                    @* <StartTemplate> *@
+                    @*     destrugter *@
+                    @* </StartTemplate> *@
+                    <HeaderTemplate>
+                        <FluentLabel Typo="@Typography.Header">Login</FluentLabel>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <div style="width: 250px; height: 80px">
+                            <FluentLabel Typo="@Typography.Header" Style="font-weight: bold;">destrugter</FluentLabel>
+                            <FluentLabel>destrugter@gmail.com</FluentLabel>
+                        </div>
+                    </ChildContent>
+                    <FooterTemplate>
+                        <FluentStack>
+                            <FluentSpacer/>
+                            <FluentAnchor Appearance="@Appearance.Hypertext"
+                                          Href="https://microsoft.com"
+                                          Target="_blank">About</FluentAnchor>
+                        </FluentStack>
+                    </FooterTemplate>
+                </FluentProfileMenu>
+            </FluentStack>
+
+
+
+            @* <FluentButton BackgroundColor="var(--neutral-layer-4)" OnClick="OpenChatAsync" Title="Chat"> *@
+            @*     <FluentIcon Value="@(new Icons.Regular.Size20.Chat())" Color="Color.Neutral"  Title="Chat" /> *@
+            @* </FluentButton> *@
+        </FluentHeader>
+
+        <FluentStack Class="body-stack" Orientation="Orientation.Horizontal" Width="100%" HorizontalGap="0">
+            <NavMenu/>
+
+            <FluentBodyContent id="body-content" Style="height: calc(100dvh - 90px);">
+                <div class="content">
+                    <article class="content px-4">
+                        @Body
+                    </article>
+
+                    <FluentToastProvider @rendermode="RenderMode.InteractiveServer" />
+                    <FluentDialogProvider @rendermode="RenderMode.InteractiveServer" />
+                    <FluentTooltipProvider @rendermode="RenderMode.InteractiveServer" />
+                    <FluentMessageBarProvider @rendermode="RenderMode.InteractiveServer" />
+                    <FluentMenuProvider @rendermode="RenderMode.InteractiveServer" />
+                </div>
+            </FluentBodyContent>
+            
+            @if (isChatOpen)
+            {
+                <div class="chat">
+                    <FluentStack Orientation="Orientation.Vertical" VerticalAlignment="VerticalAlignment.Bottom">
+                        
+                        <FluentStack Orientation="Orientation.Vertical" Class="chatBody">
+                            @foreach (var chatMessage in ChatMessages)
+                            {
+                                <FluentStack Orientation="Orientation.Horizontal">
+                                    <FluentPersona Name="@chatMessage.user"
+                                                   ImageSize="50px"/>
+                                    @chatMessage.message
+                                </FluentStack>
+                            }
+                        </FluentStack>
+                        
+                        <div style="display: flex;">
+                            <h4>Enter your message</h4>
+                            <FluentTextArea style="width: 100%;"></FluentTextArea>
+                        </div>
+                    </FluentStack>
+                </div>
+            }
+        </FluentStack>
+
+
+        <FluentFooter Style="@("height: 40px; color: white;  font-size: var(--type-ramp-minus-1-font-size); line-height: var(--type-ramp-base-line-height);")">
+            <div class="version">
+                Version: put version here later
+                &nbsp;-&nbsp;
+                <a href="https://dotnet.microsoft.com/en-us/learn/aspnet/what-is-aspnet-core">Powered by @RuntimeInformation.FrameworkDescription</a>
+            </div>
+            <FluentSpacer />
+            <div class="copy">
+                Idk if a copyright will even exist
+            </div>
+        </FluentFooter>
+    </FluentLayout>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

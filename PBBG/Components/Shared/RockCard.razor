@@ -1,0 +1,61 @@
+﻿@using PBBG.Contracts
+@rendermode InteractiveServer
+
+<FluentCard>
+    <FluentGrid>
+        <FluentGridItem xs="12">
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+                <FluentBadge>
+                    @* Status effects *@
+                </FluentBadge>
+            </FluentStack>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12">
+            <img src="@Rock.Image" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover; cursor: url('images/Skills/Mining_Icon.webp'), auto; "/>
+        </FluentGridItem>
+
+        <FluentGridItem xs="12">
+            @Rock.Name
+        </FluentGridItem>
+        
+        <FluentGridItem xs="12">
+            @foreach (var dropTable in Rock.DropTables)
+            {
+                @foreach (var drop in dropTable.Items)
+                {
+                    <img src="@drop.Image" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;" id="@($"{Rock.Name}.{dropTable.Name}.{drop.Name}")"/>
+
+                    <FluentTooltip Anchor="@($"{Rock.Name}.{dropTable.Name}.{drop.Name}")">
+                        <FluentStack Orientation="Orientation.Vertical">
+                            @drop.Name
+                            @(((@dropTable.Chance * @drop.Chance) * 100)) %
+                        </FluentStack>
+                    </FluentTooltip>
+                }
+            }
+        </FluentGridItem>
+
+        <FluentGridItem xs="6">
+            <FluentCounterBadge Count="@Rock.Quantity" BackgroundColor="@Color.Error" Color="Color.Fill">
+                <ChildContent>
+                    <FluentButton OnClick="HarvestRock">
+                        Harvest
+                    </FluentButton>
+                </ChildContent>
+                <BadgeTemplate>@context</BadgeTemplate>
+            </FluentCounterBadge>
+        </FluentGridItem>
+    </FluentGrid>
+
+    <FluentOverlay Visible="@(1 < Rock.RequiredLevel)"
+                   Opacity="0.8"
+                   Alignment="Align.Center"
+                   Justification="JustifyContent.Center"
+                   Dismissable="false"
+                   FullScreen="false"
+    >
+        <img src="images/Skills/Mining_icon.webp" style="max-width: inherit; max-height: inherit; height: inherit; width: inherit; object-fit: cover;"/>
+        @Rock.RequiredLevel
+    </FluentOverlay>
+</FluentCard>
